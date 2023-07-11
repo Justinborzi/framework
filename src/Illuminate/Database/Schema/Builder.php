@@ -215,6 +215,42 @@ class Builder
     }
 
     /**
+     * Determine if the given table has given index.
+     *
+     * @param  string $table
+     * @param  string $column
+     * @return bool
+     */
+    function hasIndex(string $table, string $indexes) : bool
+    {
+        $indxColumns = $this->connection
+            ->getDoctrineSchemaManager()
+            ->listTableIndexes($table, $this->connection->getDatabaseName());
+
+        return collect($indxColumns)->map(function ($indxColumn) {
+            return $indxColumn->getColumns();
+        })->flatten()->contains($indexes);
+    }
+
+    /**
+     * Determine if the given table has given indexes.
+     *
+     * @param  string $table
+     * @param  string $column
+     * @return bool
+     */
+    function hasIndexes(string $table, string $indexes) : bool
+    {
+        $indxColumns = $this->connection
+            ->getDoctrineSchemaManager()
+            ->listTableIndexes($table, $this->connection->getDatabaseName());
+
+        return collect($indxColumns)->map(function ($indxColumn) {
+            return $indxColumn->getColumns();
+        })->flatten()->has($indexes);
+    }
+
+    /**
      * Determine if the given table has given columns.
      *
      * @param  string  $table
