@@ -179,6 +179,42 @@ class Builder
     }
 
     /**
+     * Determine if the given table has given foreign key.
+     *
+     * @param  string $table
+     * @param  string $column
+     * @return bool
+     */
+    function hasForeignKey(string $table, string $key) : bool
+    {
+        $fkColumns = $this->connection
+            ->getDoctrineSchemaManager()
+            ->listTableForeignKeys($table, $this->connection->getDatabaseName());
+
+        return collect($fkColumns)->map(function ($fkColumn) {
+            return $fkColumn->getColumns();
+        })->flatten()->contains($key);
+    }
+    
+    /**
+     * Determine if the given table has given foreign keys.
+     *
+     * @param  string $table
+     * @param  string $column
+     * @return bool
+     */
+    function hasForeignKeys(string $table, string $keys) : bool
+    {
+        $fkColumns = $this->connection
+            ->getDoctrineSchemaManager()
+            ->listTableForeignKeys($table, $this->connection->getDatabaseName());
+
+        return collect($fkColumns)->map(function ($fkColumn) {
+            return $fkColumn->getColumns();
+        })->flatten()->has($keys);
+    }
+
+    /**
      * Determine if the given table has given columns.
      *
      * @param  string  $table
